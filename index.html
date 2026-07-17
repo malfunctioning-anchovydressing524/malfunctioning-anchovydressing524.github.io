@@ -654,14 +654,28 @@ const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,100); cam
 const R=1, globe=new THREE.Group(); scene.add(globe);
 const Y_AXIS=new THREE.Vector3(0,1,0), X_AXIS=new THREE.Vector3(1,0,0);
 
-/* ---- night-sky backdrop: dark gradient + drifting starfield behind the globe ---- */
+/* ---- black space backdrop + tech grid + drifting starfield behind the globe ---- */
 (function(){
   const s=512,c=document.createElement('canvas');c.width=c.height=s;const g=c.getContext('2d');
   const grad=g.createRadialGradient(s/2,s*0.42,0,s/2,s*0.42,s*0.72);
-  grad.addColorStop(0,'#161f38');grad.addColorStop(0.55,'#0b1122');grad.addColorStop(1,'#04060d');
+  grad.addColorStop(0,'#0a0c11');grad.addColorStop(0.55,'#030407');grad.addColorStop(1,'#000000');
   g.fillStyle=grad;g.fillRect(0,0,s,s);
   scene.background=new THREE.CanvasTexture(c);
 })();
+/* grid drawn on real 3D geometry (not the 2D background) so cells stay square on any screen */
+function makeGridTexture(){
+  const s=256,c=document.createElement('canvas');c.width=c.height=s;const g=c.getContext('2d');
+  const cell=s/8;
+  g.strokeStyle='rgba(150,182,224,0.5)';g.lineWidth=1;
+  for(let i=0;i<=8;i++){const p=Math.round(i*cell)+0.5;
+    g.beginPath();g.moveTo(p,0);g.lineTo(p,s);g.stroke();
+    g.beginPath();g.moveTo(0,p);g.lineTo(s,p);g.stroke();}
+  const tex=new THREE.CanvasTexture(c); tex.wrapS=tex.wrapT=THREE.RepeatWrapping; tex.repeat.set(14,14);
+  return tex;
+}
+const gridMat=new THREE.MeshBasicMaterial({map:makeGridTexture(),transparent:true,opacity:0.4,depthWrite:false,side:THREE.DoubleSide});
+const gridPlane=new THREE.Mesh(new THREE.PlaneGeometry(130,130),gridMat);
+gridPlane.position.z=-36; scene.add(gridPlane);
 function makeStarTexture(){const s=32,c=document.createElement('canvas');c.width=c.height=s;const g=c.getContext('2d');
   const r=g.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
   r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(0.4,'rgba(255,255,255,.75)');r.addColorStop(1,'rgba(255,255,255,0)');
@@ -697,11 +711,21 @@ let mapImg=null;
 (function(){
   const img=new Image();
   img.onload=()=>{
-    // grayscale + lighten the antique map for the clean white/grey theme
-    const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;
-    const cx2=cv.getContext('2d');cx2.drawImage(img,0,0);
+    // recolor the antique map by luminance: ocean -> blue, land -> olive/tan (keeps all the ink linework/shading)
+    const cv=document.createElement('canvas');cv.width=img.naturalWidth/2;cv.height=img.naturalHeight/2;
+    const cx2=cv.getContext('2d');cx2.drawImage(img,0,0,cv.width,cv.height);
     try{const id=cx2.getImageData(0,0,cv.width,cv.height),d=id.data;
-      for(let p=0;p<d.length;p+=4){const g=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];const v=g*0.5+128;d[p]=d[p+1]=d[p+2]=v;}
+      const landLo=[28,58,26],landHi=[171,150,88],oceanLo=[10,45,92],oceanHi=[88,168,214];
+      const c01=x=>x<0?0:x>1?1:x;
+      for(let p=0;p<d.length;p+=4){
+        const g=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];
+        const kl=c01((g-20)/(195-20)), ko=c01((g-198)/(246-198));
+        const st=c01((g-188)/(208-188)), mix=st*st*(3-2*st);
+        for(let ch=0;ch<3;ch++){
+          const lc=landLo[ch]+(landHi[ch]-landLo[ch])*kl, oc=oceanLo[ch]+(oceanHi[ch]-oceanLo[ch])*ko;
+          d[p+ch]=lc*(1-mix)+oc*mix;
+        }
+      }
       cx2.putImageData(id,0,0);}catch(_){}
     mapImg=cv;
     const t=new THREE.Texture(cv); t.encoding=THREE.sRGBEncoding;
