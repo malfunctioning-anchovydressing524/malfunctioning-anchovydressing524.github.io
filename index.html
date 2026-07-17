@@ -19,7 +19,7 @@
 <style>
   :root{
     --ink:#16181d; --ink-soft:#5b616c; --ink-faint:rgba(22,24,29,.45); --line:rgba(22,24,29,.1);
-    --accent:#16181d; --sel:#dc143c; --brass:#6b7280;
+    --accent:#16181d; --sel:#ff0000; --brass:#6b7280;
     --edge:rgba(22,24,29,.14);
     --glass:rgba(255,255,255,.82);
     --grid:rgba(22,24,29,.06);
@@ -107,7 +107,8 @@
   .list::-webkit-scrollbar-thumb{background:var(--ink-faint);border-radius:9px;border:3px solid transparent;background-clip:padding-box}
   .item{display:flex;align-items:center;gap:11px;padding:7px 11px;border-radius:4px;cursor:pointer;transition:background .18s}
   .item:hover{background:rgba(154,51,36,.1)}
-  .item.active{background:rgba(220,20,60,.14);box-shadow:inset 2px 0 0 var(--sel)}
+  .item.active{background:rgba(255,0,0,.14);box-shadow:inset 2px 0 0 var(--sel)}
+  .item.active .nm::before{content:"✕ ";color:var(--sel)}
   .item .rmap{width:48px;height:32px;flex:none;border:1px solid var(--ink-faint);border-radius:3px;display:block}
   .item .nm{font-family:var(--font-display);font-size:16px;font-weight:500;letter-spacing:.4px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .item .rg{font-size:15px;font-style:italic;color:var(--ink-soft);margin-top:-1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -749,7 +750,7 @@ function drawAllRowMaps(){ document.querySelectorAll('canvas.rmap').forEach(cv=>
 function v3(lat,lng,radius){const phi=(90-lat)*Math.PI/180,th=(lng+180)*Math.PI/180;
   return new THREE.Vector3(-(radius*Math.sin(phi)*Math.cos(th)),radius*Math.cos(phi),radius*Math.sin(phi)*Math.sin(th));}
 /* selected/focused marker glows this brighter red */
-const SELECTED_RED=0xdc143c;
+const SELECTED_RED=0xff0000;
 // lights so the 3D pins shade properly (the earth is MeshBasicMaterial, unaffected by lights)
 scene.add(new THREE.AmbientLight(0xffffff,0.66));
 const keyLight=new THREE.DirectionalLight(0xfff2d8,1.25);keyLight.position.set(3,4,5);scene.add(keyLight);
@@ -803,7 +804,7 @@ function makeHouse(accent){const g=new THREE.Group();const base=accent||0xc8902f
   g.userData={wallMat,roofMat,glow,baseColor:base,roofColor:roofCol};
   return g;}
 const markers=[];
-PLACES.forEach((p,i)=>{const home=!!p.home,accent=home?0xc8902f:0xdc143c,haloCol=home?0xfff1cf:0xf3e8cd;
+PLACES.forEach((p,i)=>{const home=!!p.home,accent=home?0xc8902f:0xff0000,haloCol=home?0xfff1cf:0xf3e8cd;
   const surf=v3(p.lat,p.lng,R*1.001),dir=surf.clone().normalize(),out=surf.clone().multiplyScalar(2),flat=v3(p.lat,p.lng,R*1.004);
   // flat contact halo + pulse on the crust
   const halo=new THREE.Mesh(haloGeo,new THREE.MeshBasicMaterial({color:haloCol,transparent:true,opacity:0.9,side:THREE.DoubleSide}));halo.position.copy(flat);halo.lookAt(out);globe.add(halo);
